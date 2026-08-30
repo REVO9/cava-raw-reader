@@ -1,5 +1,6 @@
 use tokio::io::{self, AsyncReadExt};
 
+/// Reads cava frames from a reader
 pub struct CavaReader<R> {
     input: R,
     buf: BarFrame,
@@ -20,6 +21,7 @@ pub struct BarFrame {
 }
 
 impl<R: tokio::io::AsyncRead + Unpin> CavaReader<R> {
+    /// Create a new reader. Make sure `format` and `num_bars` are the same here as for cava
     pub fn new(format: CavaOutputFormat, num_bars: usize, input: R) -> Self {
         Self {
             input,
@@ -33,6 +35,16 @@ impl<R: tokio::io::AsyncRead + Unpin> CavaReader<R> {
             Ok(_) => Ok(Some(&self.buf)),
             Err(err) if err.kind() == tokio::io::ErrorKind::UnexpectedEof => Ok(None),
             Err(err) => Err(err.into()),
+        }
+    }
+
+    /// Consumes `self` and returns a stream over Owned [BarFrame], cloning each frame.
+    /// This makes it slightly more expensive then [CavaReader::next_frame]
+    pub fn into_stream(mut self) -> impl futures::Stream<Item = io::Result<BarFrame>> {
+        async_stream::try_stream! {
+            while let Some(bars) = self.next_frame().await? {
+                yield bars.clone();
+            }
         }
     }
 }

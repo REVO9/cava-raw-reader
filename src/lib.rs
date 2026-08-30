@@ -1,3 +1,7 @@
+//! This crate provides [CavaReader] to parse the output from cava in raw mode.
+//! Also provides [CavaHandle] and [CavaConfig] to easily setup a configurable cava child process
+//! for all your audio visualizing needs!
+
 use std::process::{ExitStatus, Stdio};
 
 use tempfile::NamedTempFile;
@@ -6,14 +10,15 @@ use tokio::{
     process::{Child, ChildStdout},
 };
 
-use crate::{
-    config::CavaConfig,
-    reader::{BarFrame, CavaOutputFormat, CavaReader},
-};
+use crate::reader::CavaReader;
+
+pub use crate::config::CavaConfig;
+pub use crate::reader::{BarFrame, CavaOutputFormat};
 
 pub mod config;
 pub mod reader;
 
+/// A handle to a running cava process
 pub struct CavaHandle {
     reader: CavaReader<ChildStdout>,
     process: Child,
@@ -72,6 +77,16 @@ impl CavaHandle {
             })
         } else {
             result.map_err(Error::ReaderError)
+        }
+    }
+
+    /// Consumes `self` and returns a stream over Owned [BarFrame], cloning each frame.
+    /// This makes it slightly more expensive then [CavaHandle::next_frame]
+    pub fn into_stream(mut self) -> impl futures::Stream<Item = Result<BarFrame, Error>> {
+        async_stream::try_stream! {
+            while let Some(bars) = self.next_frame().await? {
+                yield bars.clone();
+            }
         }
     }
 }

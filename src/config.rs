@@ -1,7 +1,4 @@
-use std::{
-    io::{Cursor, Write},
-    str::FromStr,
-};
+use std::str::FromStr;
 
 use ini::Ini;
 
@@ -95,6 +92,7 @@ impl CavaConfig {
     }
 }
 
+#[cfg(test)]
 mod test {
     use crate::{config::CavaConfig, reader::CavaOutputFormat};
 

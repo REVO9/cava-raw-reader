@@ -1,10 +1,4 @@
-use std::process::Stdio;
-
-use cava_raw_reader::{
-    CavaHandle,
-    config::CavaConfig,
-    reader::{CavaOutputFormat, CavaReader},
-};
+use cava_raw_reader::{CavaHandle, config::CavaConfig};
 use crossterm::terminal;
 
 #[tokio::main]
@@ -13,7 +7,7 @@ pub async fn main() {
 
     let mut cava = CavaHandle::new(cava_config).unwrap();
 
-    while let Some(bars) = cava.next_frame().await.map_err(|e| format!("{e}")).unwrap() {
+    while let Some(bars) = cava.next_frame().await.unwrap() {
         // clear terminal
         crossterm::execute!(std::io::stdout(), terminal::Clear(terminal::ClearType::All)).unwrap();
 
