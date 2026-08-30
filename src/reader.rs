@@ -1,13 +1,14 @@
-use tokio::io::AsyncReadExt;
+use tokio::io::{self, AsyncReadExt};
 
 pub struct CavaReader<R> {
     input: R,
     buf: BarFrame,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub enum CavaOutputFormat {
     U8,
+    #[default]
     U16,
 }
 
@@ -27,9 +28,10 @@ impl<R: tokio::io::AsyncRead + Unpin> CavaReader<R> {
     }
 
     /// Reads the next [BarFrame]
-    pub async fn next_frame(&mut self) -> Result<&BarFrame, CavaReaderError> {
+    pub async fn next_frame(&mut self) -> io::Result<Option<&BarFrame>> {
         match self.input.read_exact(&mut self.buf.data).await {
-            Ok(_) => Ok(&self.buf),
+            Ok(_) => Ok(Some(&self.buf)),
+            Err(err) if err.kind() == tokio::io::ErrorKind::UnexpectedEof => Ok(None),
             Err(err) => Err(err.into()),
         }
     }
@@ -101,10 +103,11 @@ impl CavaOutputFormat {
             CavaOutputFormat::U16 => 2,
         }
     }
-}
 
-#[derive(Debug, thiserror::Error)]
-pub enum CavaReaderError {
-    #[error("Io error: {0}")]
-    Io(#[from] std::io::Error),
+    pub(crate) const fn to_cava_config_key(&self) -> &str {
+        match self {
+            CavaOutputFormat::U8 => "8bit",
+            CavaOutputFormat::U16 => "16bit",
+        }
+    }
 }
