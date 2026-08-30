@@ -1,4 +1,7 @@
 # cava-raw-reader
+[![crates.io](https://img.shields.io/crates/v/cava-raw-reader.svg)](https://crates.io/crates/cava-raw-reader)
+[![doc.rs](https://docs.rs/rust-ini/badge.svg)](https://docs.rs/cava-raw-reader)
+
 This crate provides `CavaReader` to parse the output from cava in raw mode.
 Also provides `CavaHandle` and `CavaConfig` to easily setup a configurable cava child process
 for all your audio visualizing needs!
