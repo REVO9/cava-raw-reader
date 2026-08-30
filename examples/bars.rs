@@ -1,4 +1,4 @@
-use cava_raw_reader::{CavaHandle, config::CavaConfig};
+use cava_raw_reader::{CavaHandle, CavaConfig};
 use crossterm::terminal;
 
 #[tokio::main]

@@ -2,6 +2,9 @@
 name = "cava-raw-reader"
 version = "0.1.0"
 edition = "2024"
+description = "Read cava output in raw mode"
+repository = "https://github.com/REVO9/cava-raw-reader.git"
+license = "MIT"
 
 [dependencies]
 async-stream = "0.3.6"
