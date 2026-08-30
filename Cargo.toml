@@ -1,6 +1,6 @@
 [package]
 name = "cava-raw-reader"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 description = "Read cava output in raw mode"
 repository = "https://github.com/REVO9/cava-raw-reader.git"
@@ -8,7 +8,6 @@ license = "MIT"
 
 [dependencies]
 async-stream = "0.3.6"
-crossterm = "0.29.0"
 futures = "0.3.34"
 rust-ini = "0.21.3"
 tempfile = "3.27.0"
@@ -17,3 +16,4 @@ tokio = { version = "1.53.1", features = ["io-util", "process"] }
 
 [dev-dependencies]
 tokio = { version = "1.53.1", features = ["macros", "rt-multi-thread"] }
+crossterm = "0.29.0"
