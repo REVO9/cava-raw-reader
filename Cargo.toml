@@ -1,6 +1,6 @@
 [package]
 name = "cava-raw-reader"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
 description = "Read cava output in raw mode"
 repository = "https://github.com/REVO9/cava-raw-reader.git"
