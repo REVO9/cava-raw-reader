@@ -14,7 +14,7 @@ pub enum CavaOutputFormat {
 }
 
 /// Represents a state of bars
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct BarFrame {
     data: Vec<u8>,
     format: CavaOutputFormat,

@@ -41,6 +41,7 @@ name = "cava-raw-reader"
 version = "0.1.2"
 dependencies = [
  "async-stream",
+ "cava-raw-reader",
  "crossterm",
  "futures",
  "rust-ini",

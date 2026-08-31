@@ -1,0 +1,8 @@
+[package]
+name = "examples"
+version = "0.0.0"
+
+[dev-dependencies]
+tokio = { version = "1.0.0", path = "../tokio", features = ["full", "tracing"] }
+tokio-util = { version = "0.7.0", path = "../tokio-util", features = ["full"] }
+tokio-stream = { version = "0.1", path = "../tokio-stream" }

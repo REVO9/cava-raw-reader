@@ -17,6 +17,8 @@ pub use crate::reader::{BarFrame, CavaOutputFormat};
 
 pub mod config;
 pub mod reader;
+#[cfg(feature = "watcher")]
+pub mod watcher;
 
 /// A handle to a running cava process
 pub struct CavaHandle {

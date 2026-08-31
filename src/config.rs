@@ -9,7 +9,7 @@ pub struct CavaConfig {
     pub(crate) num_bars: usize,
     pub(crate) output_format: CavaOutputFormat,
 
-    config: String,
+    pub config: String,
 }
 
 impl CavaConfig {
@@ -40,14 +40,16 @@ impl CavaConfig {
     /// Set the configuration with a [ini::Ini] reference.
     /// This will update `num_bars` and `output_format` with they are defined by the given config
     pub fn with_config_ini(mut self, config: &Ini) -> Self {
+        self.read_core_config(config);
+
         let mut config_bytes = Vec::new();
         config
             .write_to(&mut config_bytes)
             .expect("failed to write config");
 
-        self.read_core_config(config);
+        let config = String::from_utf8(config_bytes).expect("config is not valit utf8");
 
-        Self { ..self }
+        Self { config, ..self }
     }
 
     pub(crate) fn write_to<W>(&self, w: &mut W) -> std::io::Result<()>
