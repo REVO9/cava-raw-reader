@@ -1,5 +1,7 @@
 use tokio::io::{self, AsyncReadExt};
 
+pub type BarHeight = f32;
+
 /// Reads cava frames from a reader
 pub struct CavaReader<R> {
     input: R,
@@ -61,6 +63,23 @@ impl BarFrame {
         BarFrameIter::new(self)
     }
 
+    pub fn get_bar(&self, bar: usize) -> Option<BarHeight> {
+        let bar_height = match self.format {
+            CavaOutputFormat::U8 => self
+                .data
+                .get(bar)
+                .map(|height| *height as f32 / u8::MAX as f32),
+            CavaOutputFormat::U16 => {
+                let index = bar * 2;
+                self.data.get(index..=(index + 1)).map(|height| {
+                    let height = ((height[1] as u16) << 8) | height[0] as u16;
+                    height as f32 / u16::MAX as f32
+                })
+            }
+        };
+        bar_height
+    }
+
     pub fn num_bars(&self) -> usize {
         self.data.len() / self.format.bytes_per_bar()
     }
@@ -71,8 +90,6 @@ pub struct BarFrameIter<'a> {
     pos: usize,
 }
 
-pub type Bar = f32;
-
 impl<'a> BarFrameIter<'a> {
     fn new(data: &'a BarFrame) -> Self {
         Self { data, pos: 0 }
@@ -80,23 +97,10 @@ impl<'a> BarFrameIter<'a> {
 }
 
 impl Iterator for BarFrameIter<'_> {
-    type Item = Bar;
+    type Item = BarHeight;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let bar_height = match self.data.format {
-            CavaOutputFormat::U8 => self
-                .data
-                .data
-                .get(self.pos)
-                .map(|height| *height as f32 / u8::MAX as f32),
-            CavaOutputFormat::U16 => {
-                let index = self.pos * 2;
-                self.data.data.get(index..=(index + 1)).map(|height| {
-                    let height = ((height[1] as u16) << 8) | height[0] as u16;
-                    height as f32 / u16::MAX as f32
-                })
-            }
-        };
+        let bar_height = self.data.get_bar(self.pos);
 
         self.pos += 1;
 
