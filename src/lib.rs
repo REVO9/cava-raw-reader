@@ -14,6 +14,7 @@ use crate::reader::CavaReader;
 
 pub use crate::config::CavaConfig;
 pub use crate::reader::{BarFrame, CavaOutputFormat};
+pub use ini;
 
 pub mod config;
 pub mod reader;
