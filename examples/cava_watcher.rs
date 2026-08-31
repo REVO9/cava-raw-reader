@@ -10,7 +10,9 @@ pub async fn main() {
     let cava = CavaHandle::new(cava_config).unwrap();
     let mut cava = cava_raw_reader::watcher::CavaWatcher::spawn(cava);
 
-    while let Ok(bars) = cava.latest_frame() {
+    loop {
+        let bars = cava.latest_frame().unwrap();
+
         // clear terminal
         crossterm::execute!(std::io::stdout(), terminal::Clear(terminal::ClearType::All)).unwrap();
 
@@ -22,6 +24,8 @@ pub async fn main() {
             let string: String = std::iter::repeat_n('━', length).collect();
             println!("{}", string)
         }
+
+        drop(bars);
 
         tokio::time::sleep(Duration::from_millis(5)).await;
     }

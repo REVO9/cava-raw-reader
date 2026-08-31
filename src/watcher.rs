@@ -33,7 +33,10 @@ impl CavaWatcher {
         }
     }
 
-    pub fn latest_frame(&mut self) -> Result<BarFrame, crate::Error> {
+    /// Get the latest frame.
+    /// This returns a [tokio::sync::watch::Ref] so the same guidelines apply. TL;DR drop the
+    /// reference as soon as possible
+    pub fn latest_frame(&mut self) -> Result<impl Deref<Target = BarFrame>, crate::Error> {
         // check if the watcher handle is still running
         if let Some(task) = self.watcher_task.take_if(|t| t.is_finished()) {
             match block_on(task) {
@@ -54,6 +57,6 @@ impl CavaWatcher {
         }
 
         let frame = self.last_frame.borrow();
-        Ok(frame.clone())
+        Ok(frame)
     }
 }
