@@ -5,6 +5,8 @@ use tokio::{io, sync::watch, task::JoinHandle};
 
 use crate::{BarFrame, CavaHandle};
 
+/// A wrapper around [CavaHandle]. Use [CavaWatcher::latest_frame] to retrive the latest
+/// frame produced by cava.
 pub struct CavaWatcher {
     last_frame: watch::Receiver<BarFrame>,
     watcher_task: Option<JoinHandle<Result<(), crate::Error>>>,
